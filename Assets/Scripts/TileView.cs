@@ -20,11 +20,6 @@ public class TileView : MonoBehaviour
     [SerializeField] private Color emptyColor;
     [SerializeField] private TileColor[] tileColors;
 
-    private void Start()
-    {
-        SetNumber(number);
-    }
-
     // Update the number, text, and colors together.
     public void SetNumber(int newNumber)
     {
