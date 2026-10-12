@@ -34,6 +34,21 @@ public class Game2048 : MonoBehaviour
         {
             MoveLeft();
         }
+        else if (keyboard.rightArrowKey.wasPressedThisFrame ||
+                 keyboard.dKey.wasPressedThisFrame)
+        {
+            MoveRight();
+        }
+        else if (keyboard.upArrowKey.wasPressedThisFrame ||
+                 keyboard.wKey.wasPressedThisFrame)
+        {
+            MoveUp();
+        }
+        else if (keyboard.downArrowKey.wasPressedThisFrame ||
+                 keyboard.sKey.wasPressedThisFrame)
+        {
+            MoveDown();
+        }
     }
 
     public void StartNewGame()
@@ -167,6 +182,117 @@ public class Game2048 : MonoBehaviour
         }
 
         // Spawn a new number only when the board changed.
+        if (changed)
+        {
+            SpawnNumber();
+            RefreshBoard();
+        }
+    }
+
+    private void MoveRight()
+    {
+        bool changed = false;
+
+        for (int row = 0; row < 4; row++)
+        {
+            int[] line = new int[4];
+
+            // Read one row from right to left.
+            for (int i = 0; i < 4; i++)
+            {
+                int column = 3 - i;
+                line[i] = board[row, column];
+            }
+
+            int[] result = MergeLine(line);
+
+            // Write back from right to left.
+            for (int i = 0; i < 4; i++)
+            {
+                int column = 3 - i;
+
+                if (board[row, column] != result[i])
+                {
+                    changed = true;
+                }
+
+                board[row, column] = result[i];
+            }
+        }
+
+        if (changed)
+        {
+            SpawnNumber();
+            RefreshBoard();
+        }
+    }
+
+    private void MoveUp()
+    {
+        bool changed = false;
+
+        for (int column = 0; column < 4; column++)
+        {
+            int[] line = new int[4];
+
+            // Read one column from top to bottom.
+            for (int row = 0; row < 4; row++)
+            {
+                line[row] = board[row, column];
+            }
+
+            int[] result = MergeLine(line);
+
+            // Write back from top to bottom.
+            for (int row = 0; row < 4; row++)
+            {
+                if (board[row, column] != result[row])
+                {
+                    changed = true;
+                }
+
+                board[row, column] = result[row];
+            }
+        }
+
+        if (changed)
+        {
+            SpawnNumber();
+            RefreshBoard();
+        }
+    }
+
+    private void MoveDown()
+    {
+        bool changed = false;
+
+        for (int column = 0; column < 4; column++)
+        {
+            int[] line = new int[4];
+
+            // Read one column from bottom to top.
+            for (int i = 0; i < 4; i++)
+            {
+                int row = 3 - i;
+                line[i] = board[row, column];
+            }
+
+            int[] result = MergeLine(line);
+
+            // Write back from bottom to top.
+            for (int i = 0; i < 4; i++)
+            {
+                int row = 3 - i;
+
+                if (board[row, column] != result[i])
+                {
+                    changed = true;
+                }
+
+                board[row, column] = result[i];
+            }
+        }
+
         if (changed)
         {
             SpawnNumber();
