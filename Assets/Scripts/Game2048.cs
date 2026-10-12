@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class Game2048 : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class Game2048 : MonoBehaviour
     }
 
     [SerializeField] private CellRow[] rows = new CellRow[4];
+
+    [SerializeField] private TMP_Text scoreText;
+
+    private int score;
 
     // The first index is the row. The second index is the column.
     private int[,] board = new int[4, 4];
@@ -53,6 +58,7 @@ public class Game2048 : MonoBehaviour
 
     public void StartNewGame()
     {
+        score = 0;
         // Clear the board.
         for (int row = 0; row < 4; row++)
         {
@@ -105,7 +111,6 @@ public class Game2048 : MonoBehaviour
 
     private void RefreshBoard()
     {
-        // Display the number stored at each board position.
         for (int row = 0; row < 4; row++)
         {
             for (int column = 0; column < 4; column++)
@@ -113,6 +118,8 @@ public class Game2048 : MonoBehaviour
                 rows[row].cells[column].SetNumber(board[row, column]);
             }
         }
+
+        scoreText.text = "Score: " + score;
     }
 
     private int[] MergeLine(int[] line)
@@ -141,6 +148,9 @@ public class Game2048 : MonoBehaviour
                 number == numbers[i + 1])
             {
                 number = number * 2;
+
+                // Add the value of the newly merged tile.
+                score += number;
 
                 // Skip the number that was already merged.
                 i++;
