@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -17,7 +17,7 @@ public class Game2048 : MonoBehaviour
 
     private int score;
 
-    // The first index is the row. The second index is the column.
+    // 第一个index是row第二个是column
     private int[,] board = new int[4, 4];
 
     private void Start()
@@ -59,7 +59,7 @@ public class Game2048 : MonoBehaviour
     public void StartNewGame()
     {
         score = 0;
-        // Clear the board.
+        // 清空 刷新 board
         for (int row = 0; row < 4; row++)
         {
             for (int column = 0; column < 4; column++)
@@ -77,7 +77,7 @@ public class Game2048 : MonoBehaviour
     {
         List<Vector2Int> emptyCells = new List<Vector2Int>();
 
-        // Collect every empty position.
+        // 识别空着的cell并spawn一个数字
         for (int row = 0; row < 4; row++)
         {
             for (int column = 0; column < 4; column++)
@@ -94,14 +94,15 @@ public class Game2048 : MonoBehaviour
             return;
         }
 
-        // Pick one empty position at random.
+        // 随机选一个空着的位置
         int randomIndex = Random.Range(0, emptyCells.Count);
         Vector2Int position = emptyCells[randomIndex];
 
-        // Spawn 2 with a 90% chance, or 4 with a 10% chance.
+        //从十个数字里面抽一个 抽到0就spawn4
         int number = 2;
 
-        if (Random.Range(0, 10) == 0)
+        if (Random.Range(0, 9) == 0)
+            //random chance 拿出来单独放一个definition，为变量命名
         {
             number = 4;
         }
@@ -126,12 +127,13 @@ public class Game2048 : MonoBehaviour
     {
         List<int> numbers = new List<int>();
 
-        // Collect the numbers and skip empty cells.
         for (int i = 0; i < 4; i++)
         {
             if (line[i] != 0)
+                //如果一个数不等于0
             {
                 numbers.Add(line[i]);
+                //把这个数加入列表
             }
         }
 
@@ -143,16 +145,16 @@ public class Game2048 : MonoBehaviour
         {
             int number = numbers[i];
 
-            // Merge with the next number if they match.
+            // 如果和下一个数字相同，和列表里的下一个数字合成
             if (i + 1 < numbers.Count &&
                 number == numbers[i + 1])
             {
                 number = number * 2;
 
-                // Add the value of the newly merged tile.
+               
                 score += number;
 
-                // Skip the number that was already merged.
+                //跳过下一个已合成的数字
                 i++;
             }
 
@@ -179,7 +181,7 @@ public class Game2048 : MonoBehaviour
 
             int[] result = MergeLine(line);
 
-            // Write the merged row back to the board.
+            //在板子上显示合成后的board
             for (int column = 0; column < 4; column++)
             {
                 if (board[row, column] != result[column])
@@ -191,7 +193,7 @@ public class Game2048 : MonoBehaviour
             }
         }
 
-        // Spawn a new number only when the board changed.
+        
         if (changed)
         {
             SpawnNumber();
@@ -216,7 +218,7 @@ public class Game2048 : MonoBehaviour
 
             int[] result = MergeLine(line);
 
-            // Write back from right to left.
+            // Write back
             for (int i = 0; i < 4; i++)
             {
                 int column = 3 - i;
@@ -253,7 +255,7 @@ public class Game2048 : MonoBehaviour
 
             int[] result = MergeLine(line);
 
-            // Write back from top to bottom.
+            // Write back
             for (int row = 0; row < 4; row++)
             {
                 if (board[row, column] != result[row])
@@ -289,7 +291,7 @@ public class Game2048 : MonoBehaviour
 
             int[] result = MergeLine(line);
 
-            // Write back from bottom to top.
+            // Write back
             for (int i = 0; i < 4; i++)
             {
                 int row = 3 - i;
