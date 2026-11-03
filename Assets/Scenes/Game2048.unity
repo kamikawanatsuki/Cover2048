@@ -1249,6 +1249,7 @@ GameObject:
   - component: {fileID: 850712983}
   - component: {fileID: 850712982}
   - component: {fileID: 850712985}
+  - component: {fileID: 850712986}
   m_Layer: 5
   m_Name: Board
   m_TagString: Untagged
@@ -3106,3 +3107,17 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 1560228010}
   - {fileID: 55055754}
+--- !u!114 &850712986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850712980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 838d2052a719af9dfe6226e577c7cd68, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Game2048Animation
+  slideTime: 0.12
+  popTime: 0.12
