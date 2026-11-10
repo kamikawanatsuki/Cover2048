@@ -16,8 +16,11 @@ public class Game2048 : MonoBehaviour
     [SerializeField] private CellRow[] rows = new CellRow[4];
 
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text bestScoreText;
+    [SerializeField] private TMP_Text gameOverText;
 
     private int score;
+    private int bestScore;
 
     private Game2048Animation tileAnimation;
     private bool isAnimating;
@@ -38,6 +41,7 @@ public class Game2048 : MonoBehaviour
 
     private void Start()
     {
+        bestScore = PlayerPrefs.GetInt("Cover2048BestScore", 0);
         StartNewGame();
     }
 
@@ -148,6 +152,42 @@ public class Game2048 : MonoBehaviour
         }
 
         scoreText.text = "Score: " + score;
+
+        if (score > bestScore)
+        {
+            bestScore = score;
+            PlayerPrefs.SetInt("Cover2048BestScore", bestScore);
+            PlayerPrefs.Save();
+        }
+
+        bestScoreText.text = "Best Score: " + bestScore;
+        gameOverText.gameObject.SetActive(!CanMove());
+    }
+
+    private bool CanMove()
+    {
+        for (int row = 0; row < 4; row++)
+        {
+            for (int column = 0; column < 4; column++)
+            {
+                if (board[row, column] == 0)
+                {
+                    return true;
+                }
+
+                if (column < 3 && board[row, column] == board[row, column + 1])
+                {
+                    return true;
+                }
+
+                if (row < 3 && board[row, column] == board[row + 1, column])
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private int[] MergeLine(int[] line, TileView[] lineViews)
