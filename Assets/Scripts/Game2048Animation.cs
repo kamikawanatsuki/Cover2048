@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Game2048Animation : MonoBehaviour
 {
-    [SerializeField] private float slideTime = 0.12f;
+    [SerializeField] private float slideTime = 0.07f;
     [SerializeField] private float popTime = 0.12f;
+    [SerializeField] private float scorePopupTime = 0.7f;
 
     // One record remembers where an old number needs to slide.
     private class TileMove
@@ -19,21 +21,27 @@ public class Game2048Animation : MonoBehaviour
     private List<TileMove> moves = new List<TileMove>();
     private List<TileView> movingTiles = new List<TileView>();
     private List<TileView> mergedTiles = new List<TileView>();
+    private List<int> mergedScores = new List<int>();
+    private List<GameObject> scorePopups = new List<GameObject>();
 
     public void PrepareMove()
     {
         moves.Clear();
         mergedTiles.Clear();
+        mergedScores.Clear();
     }
 
-    public void RecordMerge(TileView tile)
+    public void RecordMerge(TileView tile, int score)
     {
         mergedTiles.Add(tile);
+        mergedScores.Add(score);
     }
 
     public void CancelAnimation(Game2048.CellRow[] rows)
     {
+        StopAllCoroutines();
         ClearMovingTiles();
+        ClearScorePopups();
         ResetTileSizes(rows);
         PrepareMove();
     }
@@ -102,6 +110,11 @@ public class Game2048Animation : MonoBehaviour
 
     public IEnumerator Pop(Game2048.CellRow[] rows, TileView spawnedTile)
     {
+        for (int i = 0; i < mergedTiles.Count; i++)
+        {
+            StartCoroutine(ShowScorePopup(mergedTiles[i], mergedScores[i]));
+        }
+
         // Merged tiles grow a little, then return to their normal size.
         // The new random tile grows from small to full size.
         float elapsed = 0;
@@ -137,6 +150,58 @@ public class Game2048Animation : MonoBehaviour
         ResetTileSizes(rows);
         moves.Clear();
         mergedTiles.Clear();
+        mergedScores.Clear();
+    }
+
+    private IEnumerator ShowScorePopup(TileView tile, int score)
+    {
+        GameObject popupObject = new GameObject("Score Popup");
+        popupObject.transform.SetParent(tile.transform, false);
+        scorePopups.Add(popupObject);
+
+        RectTransform popupRect = popupObject.AddComponent<RectTransform>();
+        popupRect.anchorMin = new Vector2(0.5f, 0.5f);
+        popupRect.anchorMax = new Vector2(0.5f, 0.5f);
+        popupRect.pivot = new Vector2(0.5f, 0.5f);
+        popupRect.sizeDelta = new Vector2(120, 50);
+        popupRect.anchoredPosition = new Vector2(0, 25);
+
+        popupObject.AddComponent<CanvasRenderer>();
+        TextMeshProUGUI popupText = popupObject.AddComponent<TextMeshProUGUI>();
+        popupText.font = tile.GetComponentInChildren<TextMeshProUGUI>().font;
+        popupText.fontSize = tile.GetComponentInChildren<TextMeshProUGUI>().fontSize;
+        popupText.fontStyle = FontStyles.Bold;
+        popupText.alignment = TextAlignmentOptions.Center;
+        popupText.raycastTarget = false;
+        popupText.text = "+" + score;
+        popupText.color = new Color(1f, 0.75f, 0.15f, 1f);
+        popupText.outlineColor = Color.black;
+        popupText.outlineWidth = 0.2f;
+
+        float elapsed = 0;
+        Color startColor = popupText.color;
+        Vector2 startPosition = popupRect.anchoredPosition;
+
+        while (elapsed < scorePopupTime)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsed / scorePopupTime);
+            popupRect.anchoredPosition = startPosition + new Vector2(0, progress * 35);
+            popupText.color = new Color(startColor.r, startColor.g, startColor.b, 1f - progress);
+            yield return null;
+        }
+
+        scorePopups.Remove(popupObject);
+        Destroy(popupObject);
+    }
+
+    private void ClearScorePopups()
+    {
+        for (int i = 0; i < scorePopups.Count; i++)
+        {
+            Destroy(scorePopups[i]);
+        }
+        scorePopups.Clear();
     }
 
     private void ClearMovingTiles()

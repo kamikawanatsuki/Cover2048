@@ -3119,5 +3119,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 838d2052a719af9dfe6226e577c7cd68, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Game2048Animation
-  slideTime: 0.12
+  slideTime: 0.07
   popTime: 0.12

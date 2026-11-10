@@ -181,10 +181,8 @@ public class Game2048 : MonoBehaviour
                 number == numbers[i + 1])
             {
                 tileAnimation.RecordMove(lineViews[positions[i + 1]], lineViews[resultIndex], numbers[i + 1]);
-                tileAnimation.RecordMerge(lineViews[resultIndex]);
                 number = number * 2;
-
-               
+                tileAnimation.RecordMerge(lineViews[resultIndex], number);
                 score += number;
 
                 //跳过下一个已合成的数字
